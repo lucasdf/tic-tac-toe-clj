@@ -1,4 +1,4 @@
-# quil
+# Tic tac toe
 
 ![screenshot](./tictactoe.png)
 
