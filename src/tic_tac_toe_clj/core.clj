@@ -4,22 +4,13 @@
 (def width 500)
 (def height 500)
 
-(defn grid
-  "what a mess..."
-  []
-  (apply
-   hash-map
-   (interleave (partition 2
-                          (interleave
-                           (flatten (map #(repeat 3 %) (range 0 3)))
-                           (flatten (repeat 3 (range 0 3)))))
-               (repeat nil))))
-
 (defn setup []
   {:grid {[0 0] nil [0 1] nil [0 2] nil
           [1 0] nil [1 1] nil [1 2] nil
           [2 0] nil [2 1] nil [2 2] nil}
-   :player :circle})
+   :player :circle
+   :winner nil
+   :winning-check {:row [0 0 0] :column [0 0 0] :diag-left [0 0 0] :diag-right [0 0 0]}})
 
 (defn coordinate->grid [x y]
   [(cond
@@ -63,21 +54,40 @@
 (defn next-player [player]
   (if (= player :circle) :cross :circle))
 
-(defn click-target [state x y]
-  (or (when-let [target (coordinate->grid x y)]
-        (when-not (get-in state [:grid target :player])
-          (-> state
-              (assoc-in [:grid target] {:player (:player state)})
-              (assoc :player (next-player (:player state))))))
-      state))
+(defn player->code [player]
+  (if (= player :circle) 1 -1))
 
-(defn handle-click [state]
+(defn assoc-in-if [m ks v]
+  "Associates a truthy value in a nested associative structure"
+  (-> m (cond-> v (assoc-in ks v))))
+
+(defn check-winner [state [x y] player]
+  (let [sum-to-win (* (player->code player) 3)]
+    (when
+     (or (= (get-in state [:winning-check :row x]) sum-to-win)
+         (= (get-in state [:winning-check :column y]) sum-to-win)
+         (= (reduce #(+ %1 %2) 0 (get-in state [:winning-check :diag-left])) sum-to-win)
+         (= (reduce #(+ %1 %2) 0 (get-in state [:winning-check :diag-right])) sum-to-win))
+      player)))
+
+(defn click-target [{:keys [player] :as state} x y]
+  (let [player-code (player->code player)]
+    (or (when-let [[grid-x grid-y :as target] (coordinate->grid x y)]
+          (when-not (get-in state [:grid target :player])
+            (-> state
+                (assoc-in [:grid target] {:player player})
+                (assoc :player (next-player player))
+                (update-in [:winning-check :row grid-y] + player-code)
+                (update-in [:winning-check :column grid-y] + player-code)
+                (assoc-in-if [:winning-check :diag-left grid-x] (and (= grid-x grid-y) player-code))
+                (assoc-in-if [:winning-check :diag-right grid-y] (and (= (+ grid-x grid-y 1) 3) player-code))
+                ((fn [s] (assoc-in-if s [:winner] (check-winner s target player)))))))
+        state)))
+
+(defn update-state [state]
   (if (q/mouse-pressed?)
     (click-target state (q/mouse-x) (q/mouse-y))
     state))
-
-(defn update-state [state]
-  (handle-click state))
 
 (defn draw-board []
   (q/line (* width 0.33M) 0 (* width 0.33M) height)
@@ -90,7 +100,13 @@
     (when (:player grid)
       (mark-grid (:player grid) id))))
 
+(defn draw-winner [winner]
+  (when winner
+    (q/text-size 30)
+    (q/text (str (name winner) " has won") (* width 0.4M) (* height 0.4M))))
+
 (defn draw [state]
   (q/background 255)
   (draw-board)
-  (draw-marks state))
+  (draw-marks state)
+  (draw-winner (:winner state)))

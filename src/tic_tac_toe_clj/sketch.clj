@@ -10,3 +10,5 @@
   :update core/update-state
   :draw core/draw
   :middleware [m/fun-mode])
+
+(defn -main [] ())

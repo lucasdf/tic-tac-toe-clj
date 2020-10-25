@@ -1,17 +1,26 @@
 # quil
 
+![screenshot](./tictactoe.png)
+
+Tic tac toe game with [quil](https://github.com/quil/quil).
+
+## run
+`lein play`
+
 ## repl
-1. load sketch def
+```
 (use 'tic-tac-toe-clj.sketch)
-2. load fns ns
-(use :reload 'tic-tac-toe.core)
-3. restart with
-(require 'tic-tac-toe.sketch :reload)
+;; hot reload
+(use :reload 'tic-tac-toe-clj.core)
+```
 
 ## TODO
-- [ ] win condition
-- [ ] status bar showing current player
-- [ ] check if draw works when changing dimensions
+- [X] win condition
+  - [ ] avoid game continuing after a player has won by asking a key to be pressed to start again
+  - [ ] win animation
+- [ ] menu
+- [ ] status bar showing current player and time
+- [ ] check if things work when changing dimensions
 - [ ] play against computer?
 - [ ] replay log: add commands to a log so that the game can be replayed or movements undo
-- [ ] multiplayer
+- [ ] multiplayer?
