@@ -5,7 +5,7 @@
 
 (q/defsketch ttc
   :host "host"
-  :size [500 500]
+  :size [core/width (+ core/height core/margin-bottom)]
   :setup core/setup
   :update core/update-state
   :draw core/draw

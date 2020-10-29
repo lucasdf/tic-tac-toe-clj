@@ -16,10 +16,12 @@ Tic tac toe game with [quil](https://github.com/quil/quil).
 
 ## TODO
 - [X] win condition
-  - [ ] avoid game continuing after a player has won by asking a key to be pressed to start again
+  - [X] avoid game continuing after a player has won 
+  - [ ] allow pressing a key to start a new match
+  - [ ] detect and warn when game is a tie
   - [ ] win animation
 - [ ] menu
-- [ ] status bar showing current player and time
+- [X] status bar showing current player and time
 - [ ] check if things work when changing dimensions
 - [ ] play against computer?
 - [ ] replay log: add commands to a log so that the game can be replayed or movements undo
