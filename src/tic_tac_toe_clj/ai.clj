@@ -53,7 +53,7 @@
                                     (-> node
                                         (assoc-in [:grid k :player] player)
                                         (assoc :children []))))
-                             (filter #(tic-tac-toe-clj.core/check-winner % [-1 -1] player))
+                             #_(filter #(tic-tac-toe-clj.core/check-winner % [-1 -1] player))
                              )]
           (recur (if (not-empty new-nodes)
                    (->>
