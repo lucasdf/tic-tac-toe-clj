@@ -52,7 +52,6 @@
                              (map (fn [[k v]]
                                     (-> node
                                         (assoc-in [:grid k :player] player)
-                                        (dissoc :children)
                                         (assoc :children []))))
                              (filter #(tic-tac-toe-clj.core/check-winner % [-1 -1] player))
                              )]
